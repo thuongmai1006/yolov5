@@ -1,0 +1,36 @@
+import serial
+import time
+
+def send_signal(detection_result, serial_port, baud_rate=9600):
+    """
+    Sends a high/low signal to Arduino based on detection result.
+
+    Args:
+        detection_result: A boolean (True for detection, False for no detection).
+        serial_port: The serial port of your Arduino (e.g., 'COM3' on Windows, '/dev/ttyACM0' on Linux).
+        baud_rate: The baud rate for serial communication.
+    """
+    try:
+        ser = serial.Serial(serial_port, baud_rate)
+        time.sleep(2)  # Wait for Arduino to initialize
+
+        if detection_result:
+            ser.write(b'H')  # Send 'H' for high signal
+            print("Sending HIGH signal to Arduino")
+        else:
+            ser.write(b'L')  # Send 'L' for low signal
+            print("Sending LOW signal to Arduino")
+
+        ser.close()
+
+    except serial.SerialException as e:
+        print(f"Error: {e}")
+
+# Example usage (integrate this into your YOLOv5 detection code):
+#Let's say in your yolov5 code that you have a variable called "detection" that is a boolean.
+detection = True # example.
+serial_port = 'COM3' # Replace with your Arduino's serial port.
+send_signal(detection, serial_port)
+
+detection = False # example.
+send_signal(detection, serial_port)

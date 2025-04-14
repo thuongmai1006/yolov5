@@ -79,7 +79,7 @@ while True:
     #if cv2.waitKey(1) & 0xFF == ord('q'):
         #break
    except KeyboardInterrupt:
-    print("\nInterrupted by user")
+            print("\nInterrupted by user")
 
 # Final detection time output
 if detection_start:

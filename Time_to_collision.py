@@ -31,53 +31,53 @@ classNames = ['person', 'bicycle', 'car', 'motorbike', 'aeroplane', 'bus', 'trai
 # Detection duration tracker
 detection_start = None
 total_detection_time = 0
-
-while True:
-    img = picam2.capture_array()
-
-    # Measure inference time
-    start_time = time.time()
-    results = model(img, size=224)  # Match input size to camera resolution
-    inference_time = time.time() - start_time
-    print(f"Inference time: {inference_time:.3f} seconds")
-
-    detections = results.pred[0]
-    detected = False
-
-    for r in detections:
-        x1, y1, x2, y2 = int(r[0]), int(r[1]), int(r[2]), int(r[3])
-        confidence = round(r[4].item(), 2)
-        cls = int(r[5].item())
-        class_name = classNames[cls]
-
-        # Draw detection
-        cv2.rectangle(img, (x1, y1), (x2, y2), (255, 0, 255), 2)
-        cv2.putText(img, f"{class_name} {confidence}", (x1, y1 - 10),
-                    cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 255), 1)
-
-        # Target detection condition
-        if class_name == 'person' and confidence > 0.5:
-            detected = True
-
-    # Track detection duration
-    if detected:
-        arduino.write(b'1')
-        if detection_start is None:
-            detection_start = time.time()
+try: 
+    while True:
+        img = picam2.capture_array()
+    
+        # Measure inference time
+        start_time = time.time()
+        results = model(img, size=224)  # Match input size to camera resolution
+        inference_time = time.time() - start_time
+        print(f"Inference time: {inference_time:.3f} seconds")
+    
+        detections = results.pred[0]
+        detected = False
+    
+        for r in detections:
+            x1, y1, x2, y2 = int(r[0]), int(r[1]), int(r[2]), int(r[3])
+            confidence = round(r[4].item(), 2)
+            cls = int(r[5].item())
+            class_name = classNames[cls]
+    
+            # Draw detection
+            cv2.rectangle(img, (x1, y1), (x2, y2), (255, 0, 255), 2)
+            cv2.putText(img, f"{class_name} {confidence}", (x1, y1 - 10),
+                        cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 255), 1)
+    
+            # Target detection condition
+            if class_name == 'person' and confidence > 0.5:
+                detected = True
+    
+        # Track detection duration
+        if detected:
+            arduino.write(b'1')
+            if detection_start is None:
+                detection_start = time.time()
+            else:
+                duration = time.time() - detection_start
+                print(f"Person detected for {duration:.2f} seconds")
         else:
-            duration = time.time() - detection_start
-            print(f"Person detected for {duration:.2f} seconds")
-    else:
-        arduino.write(b'0')
-        if detection_start is not None:
-            total_detection_time += time.time() - detection_start
-            print(f"Detection ended. Total time: {total_detection_time:.2f} seconds")
-            detection_start = None
-
-    # Show camera
-    #cv2.imshow('Camera', img)
-    #if cv2.waitKey(1) & 0xFF == ord('q'):
-        #break
+            arduino.write(b'0')
+            if detection_start is not None:
+                total_detection_time += time.time() - detection_start
+                print(f"Detection ended. Total time: {total_detection_time:.2f} seconds")
+                detection_start = None
+    
+        # Show camera
+        #cv2.imshow('Camera', img)
+        #if cv2.waitKey(1) & 0xFF == ord('q'):
+            #break
 except KeyboardInterrupt:
     print("\nInterrupted by user") 
 

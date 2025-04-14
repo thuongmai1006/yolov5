@@ -78,13 +78,14 @@ while True:
     #cv2.imshow('Camera', img)
     #if cv2.waitKey(1) & 0xFF == ord('q'):
         #break
-   except KeyboardInterrupt:
-            print("\nInterrupted by user")
+except KeyboardInterrupt:
+    print("\nInterrupted by user") 
 
 # Final detection time output
-if detection_start:
-    total_detection_time += time.time() - detection_start
-print(f"Final total person detection time: {total_detection_time:.2f} seconds")
-
-#cv2.destroyAllWindows()
-arduino.close()
+finally:
+    if detection_start:
+        total_detection_time += time.time() - detection_start
+    print(f"Final total person detection time: {total_detection_time:.2f} seconds")
+    
+    #cv2.destroyAllWindows()
+    arduino.close()

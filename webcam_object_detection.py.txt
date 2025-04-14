@@ -9,9 +9,9 @@ if not cap.isOpened():
     exit()
 
 # Set webcam resolution
-width, height = 640, 640  # Adjust to a supported webcam resolution
-cap.set(3, width)
-cap.set(4, height)
+width, height = 640, 480  # Adjust to a supported webcam resolution
+#cap.set(3, width)
+#cap.set(4, height)
 
 model = torch.hub.load('ultralytics/yolov5', 'yolov5s')
 
